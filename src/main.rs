@@ -1,35 +1,74 @@
 extern crate handlebars;
 extern crate pulldown_cmark;
+extern crate yaml_rust;
 
 use pulldown_cmark::{Parser, html};
+use yaml_rust::YamlLoader;
 use handlebars::{Handlebars, no_escape};
 use std::fs::File;
 use std::path::Path;
 use std::io::prelude::*;
+use std::io::BufReader;
 use std::collections::BTreeMap;
 
 fn main() {
+
     let mut handlebars = Handlebars::new();
     handlebars.register_escape_fn(no_escape);
-    // register template using given name
-    if let Err(e) = handlebars.register_template_file("template", "./template.hbs") {
-        panic!("{}", e);
-    }
+    let _ = handlebars.register_template_file("template", "./template.hbs");
 
-    let mut data = BTreeMap::new();
-    data.insert("content".to_string(), read_file("post.md"));
-    let list_html = handlebars.render("template", &data).unwrap();
-    let mut file = File::create(Path::new("./index.html")).unwrap();
-    file.write_all(&list_html.as_bytes()).unwrap();
+    let html = handlebars
+        .render("template", &read_file("post.md"))
+        .expect("");
+    File::create(Path::new("./index.html"))
+        .and_then(|mut file| file.write_all(&html.as_bytes()))
+        .expect("");
 
 }
 
-fn read_file(file_name: &str) -> String {
-    let mut file = File::open(file_name).expect("");
-    let mut contents = String::new();
-    file.read_to_string(&mut contents).expect("");
-    let mut s = String::new();
-    let p = Parser::new(&contents);
-    html::push_html(&mut s, p);
-    return s;
+fn read_file(file_name: &str) -> BTreeMap<String, String> {
+    let file = File::open(file_name).expect("");
+    let buf = BufReader::new(file);
+    let mut yaml = String::new();
+    let mut markdown = String::new();
+    let mut yaml_began: Option<bool> = Option::None;
+    for line in buf.lines() {
+        let this_line = line.expect("");
+        if this_line == "---" {
+            match yaml_began {
+                Some(true) => yaml_began = Some(false),
+                _ => yaml_began = Some(true),
+            }
+        } else {
+            match yaml_began {
+                Some(true) => {
+                    yaml = yaml + &this_line;
+                    yaml = yaml + "\n";
+                }
+                Some(false) => {
+                    markdown = markdown + &this_line;
+                    markdown = markdown + "\n";
+                }
+                _ => (),
+            }
+        }
+    }
+
+    let mut content = String::new();
+    let parser = Parser::new(&markdown);
+    html::push_html(&mut content, parser);
+
+    let yamls = YamlLoader::load_from_str(&yaml).expect("");
+    let yaml_map = &yamls[0];
+    let mut data = BTreeMap::new();
+    data.insert(
+        "title".to_string(),
+        yaml_map["title"].as_str().expect("").to_string(),
+    );
+    data.insert(
+        "date".to_string(),
+        yaml_map["date"].as_str().expect("").to_string(),
+    );
+    data.insert("content".to_string(), content);
+    return data;
 }

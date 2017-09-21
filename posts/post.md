@@ -1,8 +1,7 @@
-title: hello
-
 ---
-
-# Explicitly Set Time Zone Before Parsing Date from String in Swift
+title: Explicitly Set Time Zone Before Parsing Date from String in Swift
+date: 2007-09-21 15:56
+---
 
 > `Date` represents a single point in time. A `Date` is independent of a particular calendar or time zone.
 
