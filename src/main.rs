@@ -15,11 +15,9 @@ fn main() {
 
     let mut handlebars = Handlebars::new();
     handlebars.register_escape_fn(no_escape);
-    let _ = handlebars.register_template_file("template", "./template.hbs");
+    let _ = handlebars.register_template_file("template", "./templates/post.hbs");
 
-    let path = Path::new("./posts/");
-    let file_paths = path.read_dir().expect("");
-    for dir_item in file_paths {
+    for dir_item in Path::new("./posts/").read_dir().expect("") {
         let path = dir_item.expect("").path();
         let data = read_file(path);
         let html = handlebars.render("template", &data).expect("");
