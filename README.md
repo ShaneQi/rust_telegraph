@@ -1,1 +1,1 @@
-rust_telegraph
+# rusty_blog

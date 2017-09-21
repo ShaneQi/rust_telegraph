@@ -5,7 +5,7 @@ extern crate yaml_rust;
 use pulldown_cmark::{Parser, html};
 use yaml_rust::YamlLoader;
 use handlebars::{Handlebars, no_escape};
-use std::fs::File;
+use std::fs::{create_dir_all, File};
 use std::path::Path;
 use std::io::prelude::*;
 use std::io::BufReader;
@@ -17,17 +17,22 @@ fn main() {
     handlebars.register_escape_fn(no_escape);
     let _ = handlebars.register_template_file("template", "./template.hbs");
 
-    let html = handlebars
-        .render("template", &read_file("post.md"))
-        .expect("");
-    File::create(Path::new("./index.html"))
-        .and_then(|mut file| file.write_all(&html.as_bytes()))
-        .expect("");
-
+    let path = Path::new("./posts/");
+    let file_paths = path.read_dir().expect("");
+    for dir_item in file_paths {
+        let path = dir_item.expect("").path();
+        let data = read_file(path);
+        let html = handlebars.render("template", &data).expect("");
+        let file_name = data["title"].as_str().to_string().replace(" ", "-");
+        let _ = create_dir_all(&format!("./{}/", file_name));
+        File::create(&format!("./{}/index.html", file_name))
+            .and_then(|mut file| file.write_all(&html.as_bytes()))
+            .expect("");
+    }
 }
 
-fn read_file(file_name: &str) -> BTreeMap<String, String> {
-    let file = File::open(file_name).expect("");
+fn read_file<P: AsRef<Path>>(path: P) -> BTreeMap<String, String> {
+    let file = File::open(path).expect("");
     let buf = BufReader::new(file);
     let mut yaml = String::new();
     let mut markdown = String::new();
