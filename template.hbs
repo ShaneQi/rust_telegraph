@@ -1,0 +1,15 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../telegra.ph.css">
+</head>
+
+<body>
+    <div class="page">
+        <h1>{{result.title}}</h1>
+        {{#each result.content}} {{> page}} {{/each}}
+    </div>
+</body>
+
+</html>
