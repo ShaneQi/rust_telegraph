@@ -22,17 +22,21 @@ fn main() {
 
     for dir_item in Path::new("./posts/").read_dir().expect("") {
         let path = dir_item.expect("").path();
+        if path.extension().and_then(|s| s.to_str()).unwrap_or("") != "md" {
+            continue;
+        }
+        println!("{:?}", path);
         let data = read_file(path);
         let post_html = handlebars.render("post", &data).expect("");
-        let perma_name = data["perma_name"].as_str().to_string();
-        let _ = create_dir_all(&format!("./{}/", perma_name));
-        File::create(&format!("./{}/index.html", perma_name))
+        let permalink = data["permalink"].as_str().to_string();
+        let _ = create_dir_all(&format!("./{}/", permalink));
+        File::create(&format!("./{}/index.html", permalink))
             .and_then(|mut file| file.write_all(&post_html.as_bytes()))
             .expect("");
         posts.push(data);
     }
 
-    posts.sort_by(|a, b| b["date"].as_str().cmp(a["date"].as_str()) );
+    posts.sort_by(|a, b| b["date"].as_str().cmp(a["date"].as_str()));
 
     let index_post_html = handlebars.render("index", &posts).expect("");
     File::create("./index.html")
@@ -80,8 +84,13 @@ fn read_file<P: AsRef<Path>>(path: P) -> BTreeMap<String, String> {
     data.insert("date".to_string(), date.to_string());
     data.insert("title".to_string(), title.clone());
     data.insert(
-        "perma_name".to_string(),
-        title.replace(" ", "-") + "-" + &date.chars().skip(2).take(8).collect::<String>(),
+        "permalink".to_string(),
+        yaml_map["permalink"]
+            .as_str()
+            .map(|s| s.to_string())
+            .unwrap_or(
+                title.replace(" ", "-") + "-" + &date.chars().skip(2).take(8).collect::<String>(),
+            ),
     );
     data.insert("content".to_string(), content);
     return data;

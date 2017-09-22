@@ -8,13 +8,13 @@
 
 <body>
     <div class="page">
-    <h1>Shane's Rusty Blog</h1>
-    <br>
-    <ul>
-        {{#each . as |post|}}
-        <li><a href="./{{post.perma_name}}">{{post.title}}</a></li>
-        {{/each}}
-    </ul>
+        <h1>Shane's Rusty Blog</h1>
+        <br>
+        <ul>
+            {{#each . as |post|}}
+            <li><a href="./{{post.permalink}}">{{post.title}}</a></li>
+            {{/each}}
+        </ul>
     </div>
 </body>
 
