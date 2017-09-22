@@ -25,7 +25,7 @@ fn main() {
         if path.extension().and_then(|s| s.to_str()).unwrap_or("") != "md" {
             continue;
         }
-        println!("{:?}", path);
+        println!("Processed file: {:?}", path);
         let data = read_file(path);
         let post_html = handlebars.render("post", &data).expect("");
         let permalink = data["permalink"].as_str().to_string();
