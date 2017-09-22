@@ -89,7 +89,7 @@ fn read_file<P: AsRef<Path>>(path: P) -> BTreeMap<String, String> {
             .as_str()
             .map(|s| s.to_string())
             .unwrap_or(
-                title.replace(" ", "-") + "-" + &date.chars().skip(2).take(8).collect::<String>(),
+                title.to_lowercase().replace(" ", "-") + "-" + &date.chars().skip(2).take(8).collect::<String>(),
             ),
     );
     data.insert("content".to_string(), content);
