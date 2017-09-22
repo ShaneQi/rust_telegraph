@@ -1,0 +1,21 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./css/telegraph.css">
+    <title>Shane's Rusty Blog</title>
+</head>
+
+<body>
+    <div class="page">
+        <h1>Shane's Rusty Blog</h1>
+        <br>
+        <ul>
+            {{#each . as |post|}}
+            <li><a href="./{{post.permalink}}">{{post.title}}</a></li>
+            {{/each}}
+        </ul>
+    </div>
+</body>
+
+</html>
