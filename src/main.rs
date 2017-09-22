@@ -13,13 +13,14 @@ use std::collections::BTreeMap;
 
 fn main() {
 
+    // Config handlerbars.
     let mut handlebars = Handlebars::new();
     handlebars.register_escape_fn(no_escape);
     let _ = handlebars.register_template_file("post", "./templates/post.hbs");
     let _ = handlebars.register_template_file("index", "./templates/index.hbs");
 
+    // Process md files.
     let mut posts: Vec<BTreeMap<String, String>> = vec![];
-
     for dir_item in Path::new("./posts/").read_dir().expect("") {
         let path = dir_item.expect("").path();
         if path.extension().and_then(|s| s.to_str()).unwrap_or("") != "md" {
@@ -35,9 +36,9 @@ fn main() {
             .expect("");
         posts.push(data);
     }
-
     posts.sort_by(|a, b| b["date"].as_str().cmp(a["date"].as_str()));
 
+    // Generate homepage.
     let index_post_html = handlebars.render("index", &posts).expect("");
     File::create("./index.html")
         .and_then(|mut file| file.write_all(&index_post_html.as_bytes()))
@@ -72,10 +73,12 @@ fn read_file<P: AsRef<Path>>(path: P) -> BTreeMap<String, String> {
         }
     }
 
+    // Parse markdown to html.
     let mut content = String::new();
     let parser = Parser::new(&markdown);
     html::push_html(&mut content, parser);
 
+    // Parse yaml to post info.
     let yamls = YamlLoader::load_from_str(&yaml).expect("");
     let yaml_map = &yamls[0];
     let mut data = BTreeMap::new();
@@ -93,5 +96,6 @@ fn read_file<P: AsRef<Path>>(path: P) -> BTreeMap<String, String> {
             ),
     );
     data.insert("content".to_string(), content);
+
     return data;
 }
