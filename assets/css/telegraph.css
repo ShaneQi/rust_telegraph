@@ -91,6 +91,8 @@ code {
 }
 
 img {
+    display: block;
+    margin: auto;
     max-height: 690px;
     max-width: 100%;
 }
