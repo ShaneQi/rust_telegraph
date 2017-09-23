@@ -87,6 +87,7 @@ code {
     font-family: Menlo, 'Courier New', Courier, monospace;
     background-color: rgb(245, 248, 252);
     font-size: 16px;
+    padding: 1px 3px;
 }
 
 img {
