@@ -1,6 +1,7 @@
 extern crate handlebars;
 extern crate pulldown_cmark;
 extern crate yaml_rust;
+extern crate git2;
 
 use pulldown_cmark::{Parser, html};
 use yaml_rust::YamlLoader;
@@ -11,6 +12,7 @@ use std::io::prelude::*;
 use std::io::BufReader;
 use std::collections::BTreeMap;
 use std::env;
+use git2::{Repository, ResetType};
 
 fn main() {
     // Get working paths.
@@ -32,6 +34,9 @@ fn main() {
     handlebars.register_escape_fn(no_escape);
     let _ = handlebars.register_template_file("post", "./templates/post.hbs");
     let _ = handlebars.register_template_file("index", "./templates/index.hbs");
+
+    // If the input is a repo, hard reset it.
+    fetch_reset_master_hard(&input_path);
 
     // Process md files.
     let mut posts: Vec<BTreeMap<String, String>> = vec![];
@@ -127,4 +132,24 @@ fn read_file<P: AsRef<Path>>(path: P) -> BTreeMap<String, String> {
     data.insert("content".to_string(), content);
 
     return data;
+}
+
+fn fetch_reset_master_hard(repo_path: &str) {
+    let repo = match Repository::open(repo_path) {
+        Ok(repo) => repo,
+        _ => return,
+    };
+    repo.find_remote("origin")
+        .expect("The repo doesn't have origin remote.")
+        .fetch(&["master"], None, None)
+        .expect("Failed to fetch from origin.");
+    let oid = repo.refname_to_id("refs/remotes/origin/master").expect(
+        "The origin remote dones't have master branch.",
+    );
+    let object = repo.find_object(oid, None).expect(
+        "Failed to find object from oid.",
+    );
+    repo.reset(&object, ResetType::Hard, None).expect(
+        "Failed to hard reset current head to origin/master.",
+    );
 }
