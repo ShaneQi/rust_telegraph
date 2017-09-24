@@ -8,6 +8,6 @@ rust:1.20 \
 /bin/bash -c \
 "\
 cargo run \
-/rusty_blog \
+/rusty_blog/content \
 /rusty_blog\
 "
