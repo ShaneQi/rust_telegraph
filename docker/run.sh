@@ -7,6 +7,8 @@ docker run \
 rust:1.20 \
 /bin/bash -c \
 "\
+apt update; \
+apt install cmake -y; \
 cargo run \
 /rusty_blog/content \
 /rusty_blog\
