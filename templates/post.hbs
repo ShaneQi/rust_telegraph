@@ -3,14 +3,23 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="../css/telegraph.css">
+    {{!-- prism --}}
+    <link rel="stylesheet" href="../css/prism.css">
+    <link rel="stylesheet" href="../css/prism-patch.css">
+    <script src="../script/prism.js"></script>
+    {{!-- font awesome --}}
+    <script src="https://use.fontawesome.com/8315d2853f.js"></script>
     <title>{{title}}</title>
 </head>
 
 <body>
     <div class="page">
+        <p style="position: absolute; top: 9px;"><a href="../">Back to Home</a></p>
         <h1>{{title}}</h1>
-        <div class="compose-info">Shane Qi &#x2022; {{date}}</div>
+        <div class="compose-info">Shane Qi • {{date}}</div>
         {{content}}
+        <hr>
+        <p class="contact-footer">{{> contact}}</p>
     </div>
 </body>
 

@@ -3,12 +3,18 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="./css/telegraph.css">
+    {{!-- font awesome --}}
+    <script src="https://use.fontawesome.com/8315d2853f.js"></script>
     <title>Shane's Rusty Blog</title>
 </head>
 
 <body>
     <div class="page">
         <h1>Shane's Rusty Blog</h1>
+        <br>
+        <p>
+            {{> contact}}
+        </p>
         <br>
         <ul>
             {{#each . as |post|}}
