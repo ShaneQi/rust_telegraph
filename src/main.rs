@@ -34,6 +34,7 @@ fn main() {
     handlebars.register_escape_fn(no_escape);
     let _ = handlebars.register_template_file("post", "./templates/post.hbs");
     let _ = handlebars.register_template_file("index", "./templates/index.hbs");
+    let _ = handlebars.register_template_file("contact", "./templates/contact.hbs");
 
     // If the input is a repo, hard reset it.
     fetch_reset_master_hard(&input_path);
@@ -70,12 +71,25 @@ fn main() {
         .and_then(|mut file| file.write_all(&index_post_html.as_bytes()))
         .expect("");
 
-    // Copy assets.
+    copy_assets(output_path);
+
+}
+
+fn copy_assets(output_path: String) {
     let _ = fs::create_dir_all(&format!("{}css/", output_path));
-    fs::copy(
-        "./assets/css/telegraph.css",
-        &format!("{}css/telegraph.css", output_path),
-    ).expect("");
+    let _ = fs::create_dir_all(&format!("{}script/", output_path));
+    for dir_item in Path::new("./assets/css/").read_dir().expect("") {
+        let path = dir_item.expect("").path();
+        let file_name = path.file_name().and_then(|f| f.to_str()).expect("");
+        println!("Copying asset css file: {:?}", path);
+        fs::copy(path.clone(), &format!("{}css/{}", output_path, file_name)).expect("");
+    }
+    for dir_item in Path::new("./assets/script/").read_dir().expect("") {
+        let path = dir_item.expect("").path();
+        let file_name = path.file_name().and_then(|f| f.to_str()).expect("");
+        println!("Copying asset script file: {:?}", path);
+        fs::copy(path.clone(), &format!("{}script/{}", output_path, file_name)).expect("");
+    }
 }
 
 fn read_file<P: AsRef<Path>>(path: P) -> BTreeMap<String, String> {

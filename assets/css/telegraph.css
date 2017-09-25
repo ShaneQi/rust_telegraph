@@ -10,6 +10,13 @@ body {
     margin: 0 auto;
 }
 
+hr {
+    border-style: none;
+    border-top: solid 1px rgba(0, 0, 0, 0.8);
+    width: 50%;
+    margin: 30px auto;
+}
+
 .compose-info {
     font-size: 15px;
     line-height: 18px;
@@ -78,7 +85,6 @@ pre {
     margin: 14px 0px;
     padding: 7px 21px;
     tab-size: 4;
-    text-align: start;
     white-space: pre-wrap;
     background-color: rgb(245, 248, 252);
 }
@@ -107,6 +113,11 @@ figcaption {
     padding: 12px 21px 0px;
 }
 
+ul {
+    margin: 21px;
+    padding: 0px;
+}
+
 li {
     color: rgba(0, 0, 0, 0.8);
     margin-bottom: 14px;
@@ -120,6 +131,10 @@ a {
     color: rgba(0, 0, 0, 0.8);
     line-height: 28px;
     text-decoration: none;
+}
+
+.contact-footer {
+    text-align: center;
 }
 
 @font-face {

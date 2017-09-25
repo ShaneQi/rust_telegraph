@@ -1,0 +1,9 @@
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background-color: rgb(245, 248, 252);
+    padding: 7px 21px;
+}
+
+.token.operator {
+    background-color: rgba(255,255,255,0);
+}
