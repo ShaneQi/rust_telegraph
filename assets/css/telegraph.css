@@ -4,6 +4,11 @@ body {
     font-family: CustomSerif, Georgia, Cambria, 'Times New Roman', serif;
 }
 
+.back-button {
+    position: absolute;
+    top: 9px;
+}
+
 .page {
     padding: 21px 0px;
     max-width: 732px;
