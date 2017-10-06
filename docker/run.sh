@@ -9,7 +9,7 @@ rust:1.20 \
 "\
 apt update; \
 apt install cmake -y; \
-cargo run \
+cargo run --release \
 /rusty_blog/content \
 /rusty_blog\
 "
